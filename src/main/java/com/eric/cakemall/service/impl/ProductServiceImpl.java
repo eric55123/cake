@@ -1,6 +1,7 @@
 package com.eric.cakemall.service.impl;
 
 import com.eric.cakemall.dto.ProductDTO;
+import com.eric.cakemall.exception.ProductNotFoundException;
 import com.eric.cakemall.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import com.eric.cakemall.service.ProductService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -33,17 +35,38 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO> getAllProducts() {
-        return List.of();
+        return productRepository.findAll().stream()
+                .map(product -> converToDTO(product))
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<ProductDTO> getProductById(Integer productNo) {
-        return Optional.empty();
+        return productRepository.findById(productNo)
+                .map(product -> converToDTO(product));
     }
 
     @Override
-    public ProductDTO removeProduct(Integer productNo) {
-        return null;
+    public ProductDTO updateProduct(Integer productNo, ProductDTO productDTO) {
+        // 檢查其他商品是否已經有相同名稱
+        Optional<Product> existingProductWithSameName = productRepository.findByProductName(productDTO.getProductName());
+        if (existingProductWithSameName.isPresent() && !existingProductWithSameName.get().getProductNo().equals(productNo)) {
+            // 商品名稱已存在，拋出例外
+            throw new ProductNotFoundException("商品名稱已存在: " + productDTO.getProductName());
+        }
+
+        return productRepository.findById(productNo)
+                .map(existingProduct -> {
+                    existingProduct.setProductName(productDTO.getProductName());
+                    existingProduct.setProductDesc(productDTO.getProductDesc());
+                    existingProduct.setProductAddQty(productDTO.getProductAddQty());
+                    existingProduct.setRemainingQty(productDTO.getRemainingQty());
+                    existingProduct.setProductPrice(productDTO.getProductPrice());
+                    existingProduct.setProductCategory(productDTO.getProductCategory());
+                    existingProduct.setProductStatus(productDTO.getStatus() != null && productDTO.getStatus().equals("上架中") ? 1 : 0);
+                    return converToDTO(productRepository.save(existingProduct));
+                })
+                .orElseThrow(() -> new ProductNotFoundException("找不到商品 ID：" + productNo));
     }
 
     @Override

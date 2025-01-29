@@ -12,7 +12,7 @@ public interface ProductService {
 
     Optional<ProductDTO> getProductById(Integer productNo);
 
-    ProductDTO removeProduct(Integer productNo);
+    ProductDTO updateProduct(Integer productNo, ProductDTO productDTO);
 
     void deleteProduct(Integer productNo);
 }

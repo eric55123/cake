@@ -1,7 +1,5 @@
 package com.eric.cakemall.dto;
 
-import java.time.LocalDateTime;
-
 public class ProductDTO {
     private Integer productNo;
     private String productName;
