@@ -53,5 +53,12 @@ public class ProductController {
         ProductDTO updatedProduct = productService.updateProduct(id, productDTO);
         return ResponseEntity.ok(updatedProduct);  // 如果更新成功，自動返回 200 OK
     }
-    
+
+    //刪除商品
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().header("Message", "Delete successfully").build();
+    }
+
 }

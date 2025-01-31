@@ -71,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Integer productNo) {
-
+        productRepository.deleteById(productNo);
     }
 
     // DTO 與實體的轉換
