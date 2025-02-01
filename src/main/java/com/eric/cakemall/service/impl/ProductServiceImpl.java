@@ -1,8 +1,11 @@
 package com.eric.cakemall.service.impl;
 
 import com.eric.cakemall.dto.ProductDTO;
+import com.eric.cakemall.exception.CategoryNotFoundException;
 import com.eric.cakemall.exception.ProductNotFoundException;
 import com.eric.cakemall.model.Product;
+import com.eric.cakemall.model.ProductCategory;
+import com.eric.cakemall.repository.ProductCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.eric.cakemall.repository.ProductRepository;
@@ -15,6 +18,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+
+    @Autowired
+    private ProductCategoryRepository productCategoryRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -62,12 +68,21 @@ public class ProductServiceImpl implements ProductService {
                     existingProduct.setProductAddQty(productDTO.getProductAddQty());
                     existingProduct.setRemainingQty(productDTO.getRemainingQty());
                     existingProduct.setProductPrice(productDTO.getProductPrice());
-                    existingProduct.setProductCategory(productDTO.getProductCategory());
-                    existingProduct.setProductStatus(productDTO.getStatus() != null && productDTO.getStatus().equals("上架中") ? 1 : 0);
+
+                    // 查詢並設定 ProductCategory
+                    ProductCategory category = productCategoryRepository
+                            .findByProductCategoryName(productDTO.getProductCategory())
+                            .orElseThrow(() -> new CategoryNotFoundException("找不到商品類別：" + productDTO.getProductCategory()));
+                    existingProduct.setProductCategory(category);
+
+                    // 設定商品狀態
+                    existingProduct.setProductStatus("上架中".equals(productDTO.getStatus()) ? 1 : 0);
+
                     return converToDTO(productRepository.save(existingProduct));
                 })
                 .orElseThrow(() -> new ProductNotFoundException("找不到商品 ID：" + productNo));
     }
+
 
     @Override
     public void deleteProduct(Integer productNo) {
@@ -83,20 +98,34 @@ public class ProductServiceImpl implements ProductService {
         dto.setProductAddQty(savedProduct.getProductAddQty());
         dto.setRemainingQty(savedProduct.getRemainingQty());
         dto.setProductPrice(savedProduct.getProductPrice());
-        dto.setProductCategory(savedProduct.getProductCategory());
+
+        // 獲取 ProductCategory 的名稱
+        if (savedProduct.getProductCategory() != null) {
+            dto.setProductCategory(savedProduct.getProductCategory().getProductCategoryName());
+        }
+
         dto.setStatus(savedProduct.getProductStatus() == 1 ? "上架中" : "已下架");
         return dto;
     }
 
-    private Product converToEntity(ProductDTO ProductDTO) {
+
+    private Product converToEntity(ProductDTO productDTO) {
         Product product = new Product();
-        product.setProductNo(ProductDTO.getProductNo());
-        product.setProductName(ProductDTO.getProductName());
-        product.setProductDesc(ProductDTO.getProductDesc());
-        product.setProductAddQty(ProductDTO.getProductAddQty());
-        product.setRemainingQty(ProductDTO.getRemainingQty());
-        product.setProductPrice(ProductDTO.getProductPrice());
-        product.setProductCategory(ProductDTO.getProductCategory());
+        product.setProductNo(productDTO.getProductNo());
+        product.setProductName(productDTO.getProductName());
+        product.setProductDesc(productDTO.getProductDesc());
+        product.setProductAddQty(productDTO.getProductAddQty());
+        product.setRemainingQty(productDTO.getRemainingQty());
+        product.setProductPrice(productDTO.getProductPrice());
+
+        if (productDTO.getProductCategory() != null) {
+            ProductCategory category = productCategoryRepository
+                    .findByProductCategoryName(productDTO.getProductCategory())
+                    .orElseThrow(() -> new RuntimeException("找不到商品類別：" + productDTO.getProductCategory()));
+            product.setProductCategory(category);
+        }
+
         return product;
     }
+
 }

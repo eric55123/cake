@@ -35,8 +35,9 @@ public class Product {
     @Column(name = "product_status")
     private Integer productStatus = 1;
 
-    @Column(name = "product_category")
-    private String productCategory;
+    @ManyToOne
+    @JoinColumn(name = "product_category_id")
+    private ProductCategory productCategory;
 
     @Column(name = "product_price")
     private String productPrice;
@@ -49,52 +50,20 @@ public class Product {
         this.productNo = productNo;
     }
 
-    public String getProductDesc() {
-        return productDesc;
+    public String getProductPrice() {
+        return productPrice;
     }
 
-    public void setProductDesc(String productDesc) {
-        this.productDesc = productDesc;
+    public void setProductPrice(String productPrice) {
+        this.productPrice = productPrice;
     }
 
-    public Integer getProductAddQty() {
-        return productAddQty;
+    public ProductCategory getProductCategory() {
+        return productCategory;
     }
 
-    public void setProductAddQty(Integer productAddQty) {
-        this.productAddQty = productAddQty;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public Integer getRemainingQty() {
-        return remainingQty;
-    }
-
-    public void setRemainingQty(Integer remainingQty) {
-        this.remainingQty = remainingQty;
-    }
-
-    public LocalDateTime getProductAddTime() {
-        return productAddTime;
-    }
-
-    public void setProductAddTime(LocalDateTime productAddTime) {
-        this.productAddTime = productAddTime;
-    }
-
-    public LocalDateTime getProductRemoveTime() {
-        return productRemoveTime;
-    }
-
-    public void setProductRemoveTime(LocalDateTime productRemoveTime) {
-        this.productRemoveTime = productRemoveTime;
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
     }
 
     public Integer getProductStatus() {
@@ -105,19 +74,51 @@ public class Product {
         this.productStatus = productStatus;
     }
 
-    public String getProductCategory() {
-        return productCategory;
+    public LocalDateTime getProductRemoveTime() {
+        return productRemoveTime;
     }
 
-    public void setProductCategory(String productCategory) {
-        this.productCategory = productCategory;
+    public void setProductRemoveTime(LocalDateTime productRemoveTime) {
+        this.productRemoveTime = productRemoveTime;
     }
 
-    public String getProductPrice() {
-        return productPrice;
+    public LocalDateTime getProductAddTime() {
+        return productAddTime;
     }
 
-    public void setProductPrice(String productPrice) {
-        this.productPrice = productPrice;
+    public void setProductAddTime(LocalDateTime productAddTime) {
+        this.productAddTime = productAddTime;
+    }
+
+    public Integer getRemainingQty() {
+        return remainingQty;
+    }
+
+    public void setRemainingQty(Integer remainingQty) {
+        this.remainingQty = remainingQty;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public Integer getProductAddQty() {
+        return productAddQty;
+    }
+
+    public void setProductAddQty(Integer productAddQty) {
+        this.productAddQty = productAddQty;
+    }
+
+    public String getProductDesc() {
+        return productDesc;
+    }
+
+    public void setProductDesc(String productDesc) {
+        this.productDesc = productDesc;
     }
 }
