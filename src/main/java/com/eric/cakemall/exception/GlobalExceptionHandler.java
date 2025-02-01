@@ -21,4 +21,22 @@ public class GlobalExceptionHandler {
         // 可以選擇回傳 200 OK 或保持 404 狀態
         return new ResponseEntity<>(response, HttpStatus.OK);  // 使用 OK 來表示請求成功，但回應告知查無商品
     }
+
+    // 處理重複類別名稱例外
+    @ExceptionHandler(DuplicateCategoryException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicateCategoryException(DuplicateCategoryException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Duplicate Category");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    // 處理找不到資源的例外
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleCategoryNotFoundException(CategoryNotFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Category Not Found");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 }
