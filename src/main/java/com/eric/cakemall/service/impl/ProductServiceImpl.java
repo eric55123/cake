@@ -121,7 +121,7 @@ public class ProductServiceImpl implements ProductService {
         if (productDTO.getProductCategory() != null) {
             ProductCategory category = productCategoryRepository
                     .findByProductCategoryName(productDTO.getProductCategory())
-                    .orElseThrow(() -> new RuntimeException("找不到商品類別：" + productDTO.getProductCategory()));
+                    .orElseThrow(() -> new CategoryNotFoundException("找不到商品類別：" + productDTO.getProductCategory()));
             product.setProductCategory(category);
         }
 
