@@ -16,11 +16,11 @@ public class GlobalExceptionHandler {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
         response.put("message", ex.getMessage());
-        response.put("errorCode", 404);  // 自訂錯誤代碼或保持 404
-
-        // 可以選擇回傳 200 OK 或保持 404 狀態
-        return new ResponseEntity<>(response, HttpStatus.OK);  // 使用 OK 來表示請求成功，但回應告知查無商品
+        response.put("errorCode", HttpStatus.NOT_FOUND.value());  // 使用 404 狀態碼作為錯誤代碼
+        // 回傳 404 狀態碼
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
 
     // 處理重複類別名稱例外
     @ExceptionHandler(DuplicateCategoryException.class)
@@ -54,6 +54,22 @@ public class GlobalExceptionHandler {
         response.put("error", "參數錯誤");
         response.put("message", ex.getMessage());
         return ResponseEntity.badRequest().body(response);  // 400 Bad Request
+    }
+
+    @ExceptionHandler(DuplicateAdminException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicateAdminException(DuplicateAdminException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("success", "false");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);  // 回傳 409 狀態碼
+    }
+
+    @ExceptionHandler(AdminNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleAdminNotFoundException(AdminNotFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("success", "false");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);  // 回傳 404 錯誤
     }
 
 

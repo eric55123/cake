@@ -21,8 +21,8 @@ public class Admin {
     @Column(name = "admin_mail", length = 50)
     private String adminMail; // 電子郵件
 
-    @Column(name = "admn_controller", nullable = false)
-    private Integer admnController; // 是否有控制權限 (0 = 無控制權, 1 = 有控制權)
+    @Column(name = "admin_controller", nullable = false)
+    private Integer adminController; // 是否有控制權限 (0 = 無控制權, 1 = 有控制權)
 
     @Column(name = "admin_status", nullable = false)
     private Integer adminStatus; // 狀態 (0 = 停用, 1 = 啟用)
@@ -57,12 +57,12 @@ public class Admin {
         this.adminPassword = adminPassword;
     }
 
-    public Integer getAdmnController() {
-        return admnController;
+    public Integer getAdminController() {
+        return adminController;
     }
 
-    public void setAdmnController(Integer admnController) {
-        this.admnController = admnController;
+    public void setAdminController(Integer adminController) {
+        this.adminController = adminController;
     }
 
     public String getAdminMail() {
