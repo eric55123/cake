@@ -1,4 +1,4 @@
-package com.eric.cakemall.controller;
+package com.eric.cakemall.controller.Admin;
 
 
 

@@ -12,4 +12,6 @@ public interface AdminService {
     Optional<AdminDTO> getAdminById(Integer adminId);
     AdminDTO updateAdmin(Integer adminId, AdminDTO adminDTO);
     void deleteAdmin(Integer adminId);
+    AdminDTO authenticateAdmin(String adminAccount, String adminPassword);
+    boolean hasAdminPermission(Integer adminId);
 }

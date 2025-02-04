@@ -1,28 +1,13 @@
-package com.eric.cakemall.model;
-
-import jakarta.persistence.*;
+package com.eric.cakemall.dto;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "bulletin")
-public class Bulletin {
+public class BulletinDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bulletin_no")
     private Integer bulletinNo;
-
-    @Column(name = "bulletin_title")
     private String bulletinTitle;
-
-    @Column(name = "bulletin_content")
     private String bulletinContent;
-
-    @Column(name = "bulletiin_update")
     private LocalDateTime bulletinUpdateTime;
-
-    @Column(name = "admin_id")
     private Integer adminId;
 
     public Integer getBulletinNo() {

@@ -20,6 +20,20 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private AdminRepository adminRepository;
 
+    public AdminDTO authenticateAdmin(String account, String password) {
+        Admin admin = adminRepository.findByAdminAccount(account)
+                .filter(a -> a.getAdminPassword().equals(password))
+                .orElse(null);
+        return admin != null ? convertToDTO(admin) : null;
+    }
+
+    @Override
+    public boolean hasAdminPermission(Integer adminId) {
+        return adminRepository.findById(adminId)
+                .map(admin -> admin.getAdminController() == 1)
+                .orElse(false);  // 如果找不到管理員，預設為沒有權限
+    }
+
 
     @Override
     public AdminDTO registerAdmin(AdminDTO adminDTO) {

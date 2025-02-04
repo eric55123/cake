@@ -72,5 +72,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);  // 回傳 404 錯誤
     }
 
+    @ExceptionHandler(BulletinNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleBulletinNotFoundException(BulletinNotFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Bulletin Not Found");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<Map<String, String>> handleSecurityException(SecurityException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "權限不足");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+
 
 }
