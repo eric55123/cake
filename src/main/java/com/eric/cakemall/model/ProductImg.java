@@ -12,8 +12,9 @@ public class ProductImg {
     @Column(name = "product_img_no")
     private Integer productImgNo;
 
-    @Column(name = "product_no")
-    private Integer productNo;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_no", nullable = false)
+    private Product product;
 
     @Column(name = "product_img_url")
     private  String productImgUrl;
@@ -26,12 +27,12 @@ public class ProductImg {
         this.productImgNo = productImgNo;
     }
 
-    public Integer getProductNo() {
-        return productNo;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductNo(Integer productNo) {
-        this.productNo = productNo;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public String getProductImgUrl() {

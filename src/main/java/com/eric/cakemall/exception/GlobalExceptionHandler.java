@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,14 +49,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);  // 409 Conflict
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", "參數錯誤");
-        response.put("message", ex.getMessage());
-        return ResponseEntity.badRequest().body(response);  // 400 Bad Request
-    }
-
     @ExceptionHandler(DuplicateAdminException.class)
     public ResponseEntity<Map<String, String>> handleDuplicateAdminException(DuplicateAdminException ex) {
         Map<String, String> response = new HashMap<>();
@@ -88,6 +81,36 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
+    @ExceptionHandler(CakeIllustrateNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleIllustrationNotFoundException(CakeIllustrateNotFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "圖片不存在");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 
+        @ExceptionHandler(MaxUploadSizeExceededException.class)
+        public ResponseEntity<Map<String, String>> handleMaxSizeException(MaxUploadSizeExceededException ex) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "上傳失敗");
+            response.put("message", "檔案大小超過上傳限制");
+            return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
+        }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "參數錯誤");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(ProductImgNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleProductImgNotFoundException(ProductImgNotFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "找不到圖片");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 
 }

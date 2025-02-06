@@ -5,12 +5,15 @@ import com.eric.cakemall.exception.CategoryNotFoundException;
 import com.eric.cakemall.exception.ProductNotFoundException;
 import com.eric.cakemall.model.Product;
 import com.eric.cakemall.model.ProductCategory;
+import com.eric.cakemall.model.ProductImg;
 import com.eric.cakemall.repository.ProductCategoryRepository;
+import com.eric.cakemall.repository.ProductImgRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.eric.cakemall.repository.ProductRepository;
 import com.eric.cakemall.service.ProductService;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +27,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ProductImgRepository productImgRepository;
+
+    private final String uploadDir = "C:\\Users\\user\\Desktop\\mall\\product_images\\";
 
     @Override
     public ProductDTO saveProduct(ProductDTO productDTO) {
@@ -86,6 +94,26 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Integer productNo) {
+        // 查找商品是否存在
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(() -> new RuntimeException("找不到指定的商品 ID：" + productNo));
+
+        // 查找所有與商品相關的圖片
+        List<ProductImg> productImgs = productImgRepository.findByProduct(product);
+
+        // 刪除圖片實體檔案
+        for (ProductImg img : productImgs) {
+            String filePath = uploadDir + new File(img.getProductImgUrl()).getName();
+            File file = new File(filePath);
+            if (file.exists() && !file.delete()) {
+                System.out.println("無法刪除圖片檔案：" + filePath);
+            }
+        }
+
+        // 刪除圖片紀錄
+        productImgRepository.deleteAll(productImgs);
+
+        // 刪除商品本身
         productRepository.deleteById(productNo);
     }
 

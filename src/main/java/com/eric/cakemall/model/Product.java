@@ -4,6 +4,8 @@ package com.eric.cakemall.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "product" )
@@ -41,6 +43,9 @@ public class Product {
 
     @Column(name = "product_price")
     private String productPrice;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImg> productImages = new ArrayList<>();
 
     public Integer getProductNo() {
         return productNo;
