@@ -7,9 +7,10 @@ import com.eric.cakemall.repository.CakeIllustrateRepository;
 import com.eric.cakemall.service.CakeIllustrateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,19 +20,34 @@ public class CakeIllustrateServiceImpl implements CakeIllustrateService {
     @Autowired
     private CakeIllustrateRepository repository;
 
-    @Override
-    public CakeIllustrateDTO createIllustration(CakeIllustrateDTO illustrationDTO) {
-        CakeIllustrate illustration = new CakeIllustrate();
-        illustration.setCakeImgUrl(illustrationDTO.getCakeImgUrl());
+    private final String uploadDir = "C:\\Users\\user\\Desktop\\mall\\test\\";
 
+    @Override
+    public CakeIllustrateDTO uploadImage(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("上傳的檔案不可為空");
+        }
+
+        String filePath = uploadDir + file.getOriginalFilename();
+
+        try {
+            file.transferTo(new File(filePath));
+        } catch (IOException e) {
+            throw new RuntimeException("檔案上傳失敗", e);
+        }
+
+        // 儲存圖片資訊到資料庫
+        CakeIllustrate illustration = new CakeIllustrate();
+        illustration.setCakeImgUrl(filePath);
         CakeIllustrate savedIllustration = repository.save(illustration);
-        return convertToDTO(savedIllustration);
+
+        return new CakeIllustrateDTO(savedIllustration.getCakeIllustrate(), savedIllustration.getCakeImgUrl());
     }
 
     @Override
     public List<CakeIllustrateDTO> getAllIllustrations() {
         return repository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(illustration -> new CakeIllustrateDTO(illustration.getCakeIllustrate(), illustration.getCakeImgUrl()))
                 .collect(Collectors.toList());
     }
 
@@ -39,34 +55,23 @@ public class CakeIllustrateServiceImpl implements CakeIllustrateService {
     public CakeIllustrateDTO getIllustrationById(Integer id) {
         CakeIllustrate illustration = repository.findById(id)
                 .orElseThrow(() -> new CakeIllustrateNotFoundException("找不到 ID 為 " + id + " 的圖片"));
-        return convertToDTO(illustration);
+        return new CakeIllustrateDTO(illustration.getCakeIllustrate(), illustration.getCakeImgUrl());
     }
 
-    @Transactional
     @Override
     public void deleteIllustration(Integer id) {
         CakeIllustrate illustration = repository.findById(id)
                 .orElseThrow(() -> new CakeIllustrateNotFoundException("找不到 ID 為 " + id + " 的圖片"));
 
         // 刪除實體檔案
-        String uploadDir = "C:\\Users\\user\\Desktop\\mall\\test\\";  // 你的圖片目錄
-        String filePath = uploadDir + new File(illustration.getCakeImgUrl()).getName();  // 取得檔案名稱後拼接路徑
-
-        File file = new File(filePath);
+        File file = new File(illustration.getCakeImgUrl());
         if (file.exists() && file.isFile()) {
             if (!file.delete()) {
-                throw new CakeIllustrateNotFoundException("無法刪除圖片檔案：" + filePath);
+                throw new RuntimeException("無法刪除圖片檔案：" + illustration.getCakeImgUrl());
             }
         }
 
-        // 刪除資料庫中的紀錄
+        // 刪除資料庫紀錄
         repository.deleteById(id);
-    }
-
-    private CakeIllustrateDTO convertToDTO(CakeIllustrate illustration) {
-        CakeIllustrateDTO dto = new CakeIllustrateDTO();
-        dto.setCakeIllustrateId(illustration.getCakeIllustrate());
-        dto.setCakeImgUrl(illustration.getCakeImgUrl());
-        return dto;
     }
 }

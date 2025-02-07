@@ -1,16 +1,12 @@
 package com.eric.cakemall.controller;
 
 import com.eric.cakemall.dto.CakeIllustrateDTO;
-import com.eric.cakemall.repository.ProductRepository;
 import com.eric.cakemall.service.CakeIllustrateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,23 +20,7 @@ public class CakeIllustrateController {
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("上傳的檔案不可為空");
-        }
-
-        String uploadDir = "C:\\Users\\user\\Desktop\\mall\\test\\";
-        String filePath = uploadDir + file.getOriginalFilename();
-
-        try {
-            file.transferTo(new File(filePath));
-        } catch (IOException e) {
-            throw new RuntimeException("檔案上傳失敗", e);
-        }
-
-        // 儲存圖片資訊到資料庫
-        CakeIllustrateDTO illustrationDTO = new CakeIllustrateDTO();
-        illustrationDTO.setCakeImgUrl(filePath);
-        cakeIllustrateService.createIllustration(illustrationDTO);
+        cakeIllustrateService.uploadImage(file);
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "圖片上傳成功");
