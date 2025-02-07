@@ -1,18 +1,16 @@
-package com.eric.cakemall.model;
+package com.eric.cakemall.dto;
 
-import jakarta.persistence.*;
+public class QaImgDTO {
 
-@Entity
-@Table(name = "qa_img")
-public class QaImg {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "qa_no")
     private Integer qaNo;
-
-    @Column(name = "qa_img_url", nullable = false, length = 255)
     private String qaImgUrl;
+
+    public QaImgDTO() {}
+
+    public QaImgDTO(Integer qaNo, String qaImgUrl) {
+        this.qaNo = qaNo;
+        this.qaImgUrl = qaImgUrl;
+    }
 
     public Integer getQaNo() {
         return qaNo;

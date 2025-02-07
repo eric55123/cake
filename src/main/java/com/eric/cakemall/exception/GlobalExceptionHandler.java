@@ -113,4 +113,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    @ExceptionHandler(QaImgNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleQaImgNotFoundException(QaImgNotFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "找不到圖片");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    // 處理其他例外
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "系統錯誤");
+        response.put("message", "發生未預期的錯誤，請稍後再試");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
 }
