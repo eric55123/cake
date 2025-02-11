@@ -180,16 +180,3 @@ VALUES (1, 1, '1200.00', 2),
        (1, 2, '900.50', 1),
        (2, 3, '800.00', 1);
 
-CREATE TABLE payment_callback_log (
-                                      callback_log_id INT AUTO_INCREMENT COMMENT '回傳記錄編號',
-                                      payment_order_no INT NOT NULL COMMENT '付款訂單編號',
-                                      trade_no VARCHAR(50) NOT NULL COMMENT '綠界交易編號',
-                                      rtn_code VARCHAR(10) NOT NULL COMMENT '回傳狀態碼',
-                                      rtn_msg VARCHAR(255) COMMENT '回傳訊息',
-                                      payment_date DATETIME COMMENT '付款完成時間',
-                                      callback_data TEXT COMMENT '回傳的完整 JSON 資料',
-                                      created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '記錄創建時間',
-                                      PRIMARY KEY (callback_log_id),
-                                      FOREIGN KEY (payment_order_no) REFERENCES payment_order (payment_order_no) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='付款回傳記錄表';
-
